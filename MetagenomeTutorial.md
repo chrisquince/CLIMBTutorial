@@ -1,13 +1,18 @@
 #Metagenome Tutorial (CLIMB Launch 15th June 2016)
 
-##Getting started
+##### Table of Contents  
+[Getting started](#started)  
 
+[Taxonomic profiling](#tprofiling)  
+
+##Getting started
+<a name="started"/>
 Login to your VM and as before move to the Projects directory:
 
 ```
 cd Projects
 ```
-
+<a name="tprofiling"/>
 ## Taxonomic profiling
 
 Today we are going to profile using [Metaphlan2](https://bitbucket.org/biobakery/metaphlan2) which is an easy to used read 
