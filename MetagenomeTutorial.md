@@ -5,6 +5,10 @@
 
 [Taxonomic profiling](#tprofiling)  
 
+[Functional profiling](#fprofiling)  
+
+[Assembly based metagenomics analysis](#assembly)
+
 ##Getting started
 <a name="started"/>
 Login to your VM and as before move to the Projects directory:
@@ -61,6 +65,7 @@ done
 
 Then when we are done we merge these tables:
 ```
+mkdir MetaphlanMerged
 python ~/Installed/metaphlan2/utils/merge_metaphlan_tables.py MetaphlanResults/*_pm.txt > MetaphlanMerged/merged_abundance_table.txt
 ```
 
@@ -68,6 +73,10 @@ and generate a heatmap:
 ```
 python ~/Installed/metaphlan2/utils/metaphlan_hclust_heatmap.py -c bbcry --top 25 --minv 0.1 -s log --in MetaphlanMerged/merged_abundance_table.txt --out MetaphlanMerged/abundance_heatmap.png
 ```
+
+<a name="fprofiling"/>
+## Functional profiling
+
 
 ##Assembly based metagenomics analysis
 
@@ -92,7 +101,7 @@ a collection of different software programs:
 
 9. [GFF python parser] (https://github.com/chapmanb/bcbb/tree/master/gff)
 
-#Co-assembly
+###Co-assembly
 
 We begin by performing a co-assembly of these samples using a program called megahit:
 
