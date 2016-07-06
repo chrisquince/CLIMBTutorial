@@ -1,4 +1,4 @@
-#Metagenome Tutorial (CENTA 10th June)
+#Metagenome Tutorial (CLIMB Launch 15th June 2016)
 
 ##Getting started
 
