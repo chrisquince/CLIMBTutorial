@@ -97,6 +97,21 @@ differ between healthy and controls with an FDR < 0.10
 <a name="fprofiling"/>
 ## Functional profiling
 
+To perform functional profiling we will use Diamond to map against the KEGG database.
+
+```
+mkdir KeggD
+for file in MetaTutorial/{C,H}*R12.fasta
+do 
+   
+   stub=${file%_R12.fasta}
+   stub=${stub#MetaTutorial\/}
+   echo $stub
+   diamond blastx -d ~/Databases/keggs_database/KeggUpdate/genes/fasta/kegg_genes_dmd -q $file -p 8 -a KeggD/${stub}.dmd
+   diamond view -a KeggD/${stub}.dmd -o KeggD/${stub}.m8
+done
+```
+
 <a name="assembly"/>
 ##Assembly based metagenomics analysis
 
@@ -253,5 +268,8 @@ and a pdf:
 ```
 $CONCOCT/scripts/COGPlot.R -s clustering_gt1000_scg.tsv -o clustering_gt1000_scg.pdf
 ```
+
+This is not a very good binning because of the fragmentary nature of the assembly but we have 7 
+clusters that are 50% complete genomes:
 
 ![Single copy core gene plot](./Figures/clustering_gt1000_scg.pdf)
