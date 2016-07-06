@@ -97,7 +97,7 @@ differ between healthy and controls with an FDR < 0.10
 <a name="fprofiling"/>
 ## Functional profiling
 
-
+<a name="assembly"/>
 ##Assembly based metagenomics analysis
 
 We are now going to perform a basic assembly based metagenomics analysis of these same samples. This will involve 
@@ -253,3 +253,5 @@ and a pdf:
 ```
 $CONCOCT/scripts/COGPlot.R -s clustering_gt1000_scg.tsv -o clustering_gt1000_scg.pdf
 ```
+
+![Single copy core gene plot](./Figures/clustering_gt1000_scg.pdf)
