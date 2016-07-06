@@ -74,6 +74,24 @@ and generate a heatmap:
 python ~/Installed/metaphlan2/utils/metaphlan_hclust_heatmap.py -c bbcry --top 25 --minv 0.1 -s log --in MetaphlanMerged/merged_abundance_table.txt --out MetaphlanMerged/abundance_heatmap.png
 ```
 
+This comes out a little squiffy...
+
+![Significant species](./Figures/abundance_heatmap.png)
+
+We can also test for species that are differentially abundant between the two groups using R. First we 
+use a simple Perl script to parse out just the species assignments:
+```
+FilterSpecies.pl < MetaphlanMerged/merged_abundance_table.txt > MetaphlanMerged/species_merged.tsv 
+```
+
+and then run a prepared R script:
+```
+Rscript SigTest.R 
+```
+
+This finds using Kruskal-Walllis on the log transformed abundances that three species 
+differ between healthy and controls with an FDR < 0.10
+
 ![Significant species](./Figures/SigSpecies.png)
 
 <a name="fprofiling"/>
