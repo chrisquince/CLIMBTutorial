@@ -74,6 +74,8 @@ and generate a heatmap:
 python ~/Installed/metaphlan2/utils/metaphlan_hclust_heatmap.py -c bbcry --top 25 --minv 0.1 -s log --in MetaphlanMerged/merged_abundance_table.txt --out MetaphlanMerged/abundance_heatmap.png
 ```
 
+![Significant species](./Figures/SigSpecies.png)
+
 <a name="fprofiling"/>
 ## Functional profiling
 
