@@ -97,7 +97,11 @@ differ between healthy and controls with an FDR < 0.10
 <a name="fprofiling"/>
 ## Functional profiling
 
-To perform functional profiling we will use Diamond to map against the KEGG database.
+To perform functional profiling we will use Diamond to map against the KEGG database. 
+First we will set an environmental variable to point to our copy of the Kegg:
+```
+export KEGG_DB=~/Databases/keggs_database/KeggUpdate/
+```
 
 ```
 mkdir KeggD
@@ -107,11 +111,51 @@ do
    stub=${file%_R12.fasta}
    stub=${stub#MetaTutorial\/}
    echo $stub
-   diamond blastx -d ~/Databases/keggs_database/KeggUpdate/genes/fasta/kegg_genes_dmd -q $file -p 8 -a KeggD/${stub}.dmd
-   diamond view -a KeggD/${stub}.dmd -o KeggD/${stub}.m8
+   if [ ! -f KeggD/${stub}.m8 ]; then
+    echo "KeggD/${stub}.m8"
+    diamond blastx -d $KEGG_DB/genes/fasta/kegg_genes_dmd -q $file -p 8 -a KeggD/${stub}.dmd
+    diamond view -a KeggD/${stub}.dmd -o KeggD/${stub}.m8
+   fi
 done
 ```
 
+This is a slow process even using the very efficient Diamond aligner. We recommend therefore stopping 
+the above process and copying across the prerun samples:
+
+```
+rm -r KeggD
+cp -r ~/Archive/KeggD .
+```
+
+Having mapped reads to the KEGG genes we can collate these into ortholog coverages:
+```
+for file in KeggD/*.m8
+do
+    stub=${file%.m8}
+
+    echo $stub
+    
+    python ~/bin/CalcKOCov.py $file $KEGG_DB/ko_genes_length.csv $KEGG_DB/genes/ko/ko_genes.list > ${stub}_ko_cov.csv
+
+done
+```
+We collate these into a sample table:
+```
+Collate.pl KeggD _ko_cov.csv KeggD/*_ko_cov.csv > FuncResults/ko_cov.csv
+```
+
+and also KEGG modules:
+```
+#!/bin/bash
+
+for file in KeggD/*cov*csv
+do
+    stub=${file%_ko_cov.csv}
+
+    echo $stub
+    python ./MapKO.py ~/gpfs/Databases/keggs_database/KeggUpdate/genes/ko/ko_module.list $file > ${stub}_mod_cov.csv 
+done
+```
 <a name="assembly"/>
 ##Assembly based metagenomics analysis
 
