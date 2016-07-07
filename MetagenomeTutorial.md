@@ -84,9 +84,14 @@ use a simple Perl script to parse out just the species assignments:
 FilterSpecies.pl < MetaphlanMerged/merged_abundance_table.txt > MetaphlanMerged/species_merged.tsv 
 ```
 
+Do a little reformatting:
+```
+tr "\t" "," < MetaphlanMerged/species_merged.tsv | sed 's/_pm//g' > MetaphlanMerged/species_merged.csv
+```
+
 and then run a prepared R script:
 ```
-Rscript SigTest.R 
+SigTest.R -c MetaphlanMerged/species_merged.csv -m MetaTutorial/Meta.csv
 ```
 
 This finds using Kruskal-Walllis on the log transformed abundances that three species 
@@ -160,6 +165,13 @@ Collate those across samples:
 ```
 Collate.pl KeggD _mod_cov.csv KeggD/*_mod_cov.csv > FuncResults/mod_cov.csv
 ```
+
+It turns out that neither the Kegg orthologs or modules are significant between the two groups:
+```
+SigTest.R -c FuncResults/ko_cov.csv -m MetaTutorial/Meta.csv
+SigTest.R -c FuncResults/mod_cov.csv -m MetaTutorial/Meta.csv
+```
+
 <a name="assembly"/>
 ##Assembly based metagenomics analysis
 
