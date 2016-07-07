@@ -141,20 +141,24 @@ done
 ```
 We collate these into a sample table:
 ```
+mkdir FuncResults
 Collate.pl KeggD _ko_cov.csv KeggD/*_ko_cov.csv > FuncResults/ko_cov.csv
 ```
 
 and also KEGG modules:
 ```
-#!/bin/bash
-
-for file in KeggD/*cov*csv
+for file in KeggD/*ko_cov.csv
 do
     stub=${file%_ko_cov.csv}
 
     echo $stub
-    python ./MapKO.py ~/gpfs/Databases/keggs_database/KeggUpdate/genes/ko/ko_module.list $file > ${stub}_mod_cov.csv 
+    python ~/bin/MapKO.py $KEGG_DB/genes/ko/ko_module.list $file > ${stub}_mod_cov.csv 
 done
+```
+
+Collate those across samples:
+```
+Collate.pl KeggD _mod_cov.csv KeggD/*_mod_cov.csv > FuncResults/mod_cov.csv
 ```
 <a name="assembly"/>
 ##Assembly based metagenomics analysis
