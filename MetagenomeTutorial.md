@@ -333,3 +333,20 @@ This is not a very good binning because of the fragmentary nature of the assembl
 clusters that are 50% complete genomes:
 
 ![Single copy core gene plot](./Figures/clustering_gt1000_scg.pdf)
+
+Lets calculate the cluster frequencies:
+```
+cd Concoct
+$CONCOCT/scripts/ClusterMeanCov.pl --cfile=clustering_gt1000.csv --covfile=Coverage.tsv --ffile=../contigs/final_contigs_c10K.fa > clustering_gt1000_freq.csv
+cd ..
+```
+
+Four of these clusters vary significantly between the two groups:
+```
+SigTest.R -c Concoct/clustering_gt1000_freq.csv -m MetaTutorial/Meta.csv
+```
+
+![Significant clusters](./Figures/SigClusters.png)
+
+
+
