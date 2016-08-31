@@ -1,4 +1,4 @@
-#Complete Example V0.3 STAMPS 2016
+#Complete Example DZIF 2016
 =================================
 This documentation page aims to be a complete example walk through for the usage of the CONCOCT package version 0.3 except for the assembly and COG annotations step.
 
