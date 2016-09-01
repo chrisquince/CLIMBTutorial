@@ -61,7 +61,7 @@ following commands, please **do not run this**:
 
 ```
 cd Example 
-nohup megahit -1 $(<R1.csv) -2 $(<R2.csv) -t 8 -o Assembly --presets meta > megahit.out&
+megahit -1 $(<R1.csv) -2 $(<R2.csv) -t 8 -o Assembly --presets meta 
 mv Assembly ..
 cd ..
 ```
