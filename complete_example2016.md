@@ -324,14 +324,14 @@ The plot is downloadable here:
 How many 75% complete genomes did we get. Do this yourselves in R.
 ```
 R
-> scg <- read.table("clustering_gt1000_scg.tab",header=TRUE,row.names=1)
+> scg <- read.table("evaluation-output/clustering_gt1000_scg.tab",header=TRUE,row.names=1)
 > scg <- scg[,-1]
 > scg <- scg[,-1]
 >sum(rowSums(scg == 1)/36. > 0.75)
 >q()
 ```
 
-We got 13 75% complete genomes.
+We got 12 75% complete genomes.
 
 ##Comparison to MetaBat
 
@@ -340,7 +340,6 @@ We will also compare to a competitor algorithm released last year [MetaBat](http
 "MetaBAT outperforms alternative methods in accuracy and computational efficiency on both synthetic and real metagenome datasets.".
 
 ```
-module load metabat
 mkdir Metabat
 cd Metabat
 runMetaBat.sh -m 1500 ../contigs/final_contigs_c10K.fa ../Map/Sample*_sub.bam
@@ -352,6 +351,7 @@ also rerun CONCOCT with this minimum contig length.
 ```
 cd $CONCOCT_EXAMPLE
 mkdir Concoct_gt1500
+cd Concoct_gt1500
 concoct --coverage_file ../Concoct/Coverage.tsv --composition_file ../contigs/final_contigs_c10K.fa -c 40 -l 1500
 ```
 
@@ -367,8 +367,10 @@ Then we run the validation script:
  $CONCOCT/scripts/Validate.pl --cfile=clustering_gt1500.csv --sfile=../AssignGenome/clustering_gt1000_smap.csv --ffile=../Annotate_gt1000/final_contigs_gt1000_c10K.fa --ofile=clustering_gt1500_conf.csv
 ```
 
-    N	M	TL	S	K	Rec.	Prec.	NMI	Rand	AdjRand
-    6649	6649	5.2942e+07	17	29	0.872325	0.999852	0.937318	0.984568	0.868407
+```
+N	M	TL	S	K	Rec.	Prec.	NMI	Rand	AdjRand
+8322	8317	4.7857e+07	19	26	0.876835	0.996679	0.938554	0.983830	0.868697
+```
     
 We can also generate confusion plots and the the SCG table..
 
@@ -382,11 +384,11 @@ Rscript $CONCOCT/scripts/ConfPlot.R  -c clustering_gt1500_conf.csv -o metabat_cl
 
 To generate:
 
-![Metabat scg plot](figs/metabat_clustering_gt1500_scg.pdf)
+![Metabat scg plot](figsD/metabat_clustering_gt1500_scg.pdf)
 
-![Metabat conf plot](figs/metabat_clustering_gt1500_conf.pdf)
+![Metabat conf plot](figsD/metabat_clustering_gt1500_conf.pdf)
 
-These confirm that Metabat suffers from fragmentation errors. In fact we get 11 75% complete genomes.
+These confirm that Metabat suffers from fragmentation errors. In fact we get 10 75% complete genomes.
 
 We can compare to CONCOCT at the same contig cut-off:
 
@@ -396,8 +398,10 @@ cd Concoct_gt1500
 $CONCOCT/scripts/Validate.pl --cfile=clustering_gt1500.csv --sfile=../AssignGenome/clustering_gt1000_smap.csv --ffile=../Annotate_gt1000/final_contigs_gt1000_c10K.fa --ofile=clustering_gt1500_conf.csv
 ```
 
-    N	M	TL	S	K	Rec.	Prec.	NMI	Rand	AdjRand
-    7092	7092	5.5752e+07	20	21	0.996269	0.985881	0.991647	0.999236	0.993561
+```
+N	M	TL	S	K	Rec.	Prec.	NMI	Rand	AdjRand
+8535	8535	4.9711e+07	20	23	0.993698	0.952719	0.981084	0.994119	0.954376
+```
     
 Substantially better. Looking at SCGs...
 
@@ -407,8 +411,8 @@ Rscript $CONCOCT/scripts/COGPlot.R -s clustering_gt1500_scg.tab -o concoct_clust
 Rscript $CONCOCT/scripts/ConfPlot.R  -c clustering_gt1500_conf.csv -o concoct_clustering_gt1500_conf.pdf
 ```
 
-Now we have 14. Here are the plots..
+Now we have 10. So the same as metabat :(
 
-![CONCOCT scg plot](figs/concoct_clustering_gt1500_scg.pdf)
+![CONCOCT scg plot](figsD/concoct_clustering_gt1500_scg.pdf)
 
-![CONCOCT conf plot](figs/concoct_clustering_gt1500_conf.pdf)
+![CONCOCT conf plot](figsD/concoct_clustering_gt1500_conf.pdf)
