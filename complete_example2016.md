@@ -1,32 +1,40 @@
 #Complete Example DZIF 2016
 =================================
-This documentation page aims to be a complete example walk through for the usage of the CONCOCT package version 0.3 except for the assembly and COG annotations step.
+This documentation page aims to be a complete example walk through for the usage of the CONCOCT package version 
+0.4 except for the assembly and COG annotations step.
 
-It is not required to run all steps. The output files for each step are in the test data repository. At the end of this example the results should be the same as the results in the corresponding test data repository. The version numbers listed above are the ones used to generate the results in that repository. Using newer versions will probably not be a problem, but your results may be different in that case.
+It is not required to run all steps. The output files for each step are in the test data repository. 
+At the end of this example the results should be the same as the results in the corresponding 
+test data repository. The version numbers listed above are the ones used to generate the results in that repository. 
+Using newer versions will probably not be a problem, but your results may be different in that case.
 
-##Login to the class servers
+##Login to your VM
 -----------------------
 
-    ssh -X yourname@class.mbl.edu
-    ssh -X yourname@classxx
+You need to create a VM from the image ... login to it and then set the permissions on the ephemeral disk:
 
+```
+sudo umount /mnt 
+sudo mkfs.xfs -f /dev/vdb
+sudo mount /dev/vdb /mnt/
+sudo chown ubuntu:ubuntu /mnt
+```
 
 ##Setting up the test environment
 -------------------------------
-Move to your home directory, create a folder where you want all the output from this example to go:
+Move to your mnt directory, create a folder where you want all the output from this example to go:
 
 ```
-    cd ~
+    cd /mnt
     mkdir CONCOCT-complete-example
     cd CONCOCT-complete-example
 ```
 
-Set three variables with full paths. One pointing to the root directory of the ```CONCOCT``` software, one pointing to the test data repository, named ```CONCOCT_TEST``` and one to the directory we just created. 
+Set two variables with full paths. One pointing to the root directory of the ```CONCOCT``` software, one pointing to the test data repository, named ```CONCOCT_TEST``` and one to the directory we just created. 
 
 ```
-    export CONCOCT=/class/stamps-software/CONCOCT
-    export CONCOCT_TEST=/class/stamps-software/CONCOCT-test-data
-    export CONCOCT_EXAMPLE=$HOME/CONCOCT-complete-example
+    export CONCOCT=/home/ubuntu/Installed/CONCOCT
+    export CONCOCT_EXAMPLE=/mnt/CONCOCT-complete-example
 ```
 
 You can see the full path of a directory you are located in by running the command ```pwd```.
@@ -52,6 +60,8 @@ Then assemble the reads. We recommend megahit for this. To perform the assembly 
 ```
 cd Example 
 nohup megahit -1 $(<R1.csv) -2 $(<R2.csv) -t 8 -o Assembly --presets meta > megahit.out&
+mv Assembly ..
+cd ..
 ```
 
 However, I **do not** suggest you do this now instead copy the Assembly directory from the class folders:
@@ -68,7 +78,7 @@ In order to give more weight to larger contigs and mitigate the effect of assemb
 Now lets cut up the contigs and index for the mapping program bwa:
 ```
 mkdir contigs
-python $CONCOCT/scripts/cut_up_fasta.py -c 10000 -o 0 -m $CONCOCT_TEST/Assembly/final.contigs.fa > contigs/final_contigs_c10K.fa
+python $CONCOCT/scripts/cut_up_fasta.py -c 10000 -o 0 -m Assembly/final.contigs.fa > contigs/final_contigs_c10K.fa
 ```
 
 
@@ -85,6 +95,10 @@ We are not going to perform mapping ourselves. Instead just copy the pre-calcula
 These are the commands we ran (**do not run this**).
 
 ```
+cd contigs
+bwa index final_contigs_c10K.fa
+cd ..
+
 mkdir Map
 
 for file in Example/*R1.fastq
@@ -96,13 +110,15 @@ do
 
    file2=${stub}_R2.fastq
 
-   bwa mem -t 4 contigs/final_contigs_c10K.fa $file $file2 > Map/${stub2}.sam
+   bwa mem -t 8 contigs/final_contigs_c10K.fa $file $file2 > Map/${stub2}.sam
 done
 ```
 
 Followed by these (** do not run**):
 
 ```
+$CONCOCT/scripts/Lengths.pl final_contigs_c10K.fa > final_contigs_c10K.len
+
 for file in Map/*.sam
 do
     stub=${file%.sam}
@@ -110,8 +126,19 @@ do
     echo $stub	
     samtools view -h -b -S $file > ${stub}.bam
     samtools view -b -F 4 ${stub}.bam > ${stub}.mapped.bam
-    samtools sort -m 1000000000 ${stub}.mapped.bam -o ${stub}.mapped.sorted.bam
+    samtools sort -m 1000000000 ${stub}.mapped.bam ${stub}.mapped.sorted
     bedtools genomecov -ibam ${stub}.mapped.sorted.bam -g contigs/final_contigs_c10K.len > ${stub}_cov.txt
+done
+```
+
+```
+for i in Map/*_cov.txt 
+do 
+   echo $i
+   stub=${i%_cov.txt}
+   stub=${stub#Map\/}
+   echo $stub
+   awk -F"\t" '{l[$1]=l[$1]+($2 *$3);r[$1]=$4} END {for (i in l){print i","(l[i]/r[i])}}' $i > Map/${stub}_cov.csv
 done
 ```
 
@@ -121,7 +148,7 @@ done
 Given the processed mapping files we can now generate the coverage table:
 
 ```
-$CONCOCT/scripts/Collate.pl $CONCOCT_TEST/Map | tr "," "\t" > Coverage.tsv
+$CONCOCT/scripts/Collate.pl $CONCOCT_EXAMPLE/Map | tr "," "\t" > Coverage.tsv
 ```
 
 This is a simple tab delimited file with the coverage of each contig per sample.
@@ -144,7 +171,7 @@ around 20 so run concoct with 40 as the maximum number of cluster `-c 40`:
 mkdir Concoct
 cd Concoct
 mv ../Coverage.tsv .
-concoct --coverage_file Coverage.tsv --composition_file ../contigs/final_contigs_c10K.fa
+concoct --coverage_file Coverage.tsv --composition_file ../contigs/final_contigs_c10K.fa -c 40
 cd ..
 ```
 
@@ -157,7 +184,7 @@ We are going to annotate COGs on our contigs. You first need to find genes on th
 ```
 mkdir Annotate_gt1000
 cd Annotate_gt1000
-python $CONCOCT/scripts/LengthFilter.py -m 1000 ../contigs/final_contigs_c10K.fa > final_contigs_gt1000_c10K.fa
+$CONCOCT/scripts/LengthFilter.pl ../contigs/final_contigs_c10K.fa 1000 > final_contigs_gt1000_c10K.fa
 prodigal -i final_contigs_gt1000_c10K.fa -a final_contigs_gt1000_c10K.faa -d final_contigs_gt1000_c10K.fna  -f gff -p meta -o final_contigs_gt1000_c10K.gff
 ```
 
