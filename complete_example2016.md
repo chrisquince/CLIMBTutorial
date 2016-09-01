@@ -281,7 +281,7 @@ Rscript $CONCOCT/scripts/ConfPlot.R  -c evaluation-output/clustering_gt1000_conf
 
 This generates a file with normalised frequencies of contigs from each cluster across species:
 
-![Confusion matrix](figs/clustering_gt1000_conf.pdf)
+![Confusion matrix](figsD/clustering_gt1000_conf.pdf)
 
 
 To view this also download off server to your local directory:
