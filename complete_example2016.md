@@ -254,7 +254,8 @@ In either case we provide a script Validate.pl for computing basic metrics on th
 
 ```
 cd $CONCOCT_EXAMPLE
-cp -r $CONCOCT_TEST/AssignGenome .
+mkdir AssignGenome
+cp ~/Data/clustering_gt1000_smap.csv AssignGenome
 ```
 
 And run our validation script:
@@ -265,11 +266,12 @@ $CONCOCT/scripts/Validate.pl --cfile=../Concoct/clustering_gt1000.csv --sfile=..
 
  This script requires the clustering output by concoct ```Concoct/clustering_gt1000.csv``` these have a simple format of a comma separated file listing each contig id followed by the cluster index and the species labels that have the same format but with a text label rather than a cluster index. The script should output:
 
-    N	M	TL	S	K	Rec.	Prec.	NMI	Rand	AdjRand
-    9176	9176	5.8291e+07	20	23	0.986723	0.950877	0.976244	0.993650    0.946975
+N	M	TL	S	K	Rec.	Prec.	NMI	Rand	AdjRand
+11519	11519	5.3364e+07	20	25	0.994171	0.990678	0.990872	0.998723	0.989500
 
 
-This gives the no. of contigs N clustered, the number with labels M, the number of unique labels S, the number of clusters K, the recall, the precision, the normalised mutual information (NMI), the Rand index, and the adjusted Rand index. It also generates a file called a `confusion matrix` with the frequencies of each species in each cluster. We provide a further script for visualising this as a heatmap:
+This gives the no. of contigs N clustered, the number with labels M, the number of unique labels S, 
+the number of clusters K, the recall, the precision, the normalised mutual information (NMI), the Rand index, and the adjusted Rand index. It also generates a file called a `confusion matrix` with the frequencies of each species in each cluster. We provide a further script for visualising this as a heatmap:
 
 ```
 cd $CONCOCT_EXAMPLE
