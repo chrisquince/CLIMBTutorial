@@ -66,7 +66,7 @@ mv Assembly ..
 cd ..
 ```
 
-However, I **do not** suggest you do this now instead copy the assembly directory from the Data folder:
+However, I **do not** suggest you do this now instead copy the contigs from the Data folder:
 
 ```
     mkdir Assembly
@@ -96,6 +96,7 @@ After assembly we map the reads of each sample back to the assembly using [bwa](
 ```
 cd contigs
 bwa index final_contigs_c10K.fa
+$CONCOCT/scripts/Lengths.pl final_contigs_c10K.fa > final_contigs_c10K.len
 cd ..
 
 mkdir Map
@@ -116,8 +117,6 @@ done
 Followed by these:
 
 ```
-$CONCOCT/scripts/Lengths.pl final_contigs_c10K.fa > final_contigs_c10K.len
-
 for file in Map/*.sam
 do
     stub=${file%.sam}
@@ -143,7 +142,7 @@ do
 done
 ```
 
-This is quite complex and slow. If you like just copy precomputed files instead:
+This is quite complex and slow. If you like just copy the precomputed files instead:
 
 ```
     cp ~/Data/Map.tar.gz $CONCOCT_EXAMPLE
@@ -188,7 +187,9 @@ When concoct has finished the message "CONCOCT Finished, the log shows how it we
 
 ##Contig annotation
 
-We are going to annotate COGs on our contigs. You first need to find genes on the contigs and functionally annotate these. Here we used prodigal (https://github.com/hyattpd/Prodigal) for gene prediction and annotation, but you can use anything you want (**do not run this**):
+We are going to annotate COGs on our contigs. You first need to find genes on the contigs and 
+functionally annotate these. Here we used prodigal (https://github.com/hyattpd/Prodigal) for 
+gene prediction and annotation, but you can use anything you want:
 
 ```
 mkdir Annotate_gt1000
@@ -204,22 +205,23 @@ export COGSDB_DIR=/home/opt/rpsblast_db
 nohup $CONCOCT/scripts/RPSBLAST.sh -f final_contigs_gt1000_c10K.faa -p -c 32 -r 1 > r.out&
 ```
 
-Instead just copy whole directory into your example dir (do run this)
+Instead just copy the blast results into your Annotate_gt1000 directory:
 
 ```
-cd $CONCOCT_EXAMPLE
-cp -r $CONCOCT_TEST/Annotate_gt1000 .
+cd $CONCOCT_EXAMPLE/Annotate_gt1000
+cp ~/Data/final_contigs_gt1000_c10K.out .
+cd ..
 ```
 
 How to determine number of genomes present?
 
 ```
 cd Annotate_gt1000
-python /class/stamps-software/CONCOCT/scripts/ExtractCOGs.py -b final_contigs_gt1000_c10K.out --cdd_cog_file /class/stamps-software/CONCOCT/scgs/cdd_to_cog.tsv > final_contigs_gt1000_c10K.cogs
+python $CONCOCT/scripts/ExtractCogs.py -b final_contigs_gt1000_c10K.out --cdd_cog_file $CONCOCT/scgs/cdd_to_cog.tsv > final_contigs_gt1000_c10K.cogs
 $CONCOCT/scripts/CountSCGs.pl $CONCOCT/scgs/scg_cogs_min0.97_max1.03_unique_generaR.txt < final_contigs_gt1000_c10K.cogs  | cut -d"," -f2 | awk -f $CONCOCT/scripts/median.awk
 ```
 
-The result should be 15, this places an upper limit on the number of genomes we can bin.
+The result should be 12.5, this places an upper limit on the number of genomes we can bin.
 
 ##Evaluate output
 ---------------
