@@ -284,10 +284,10 @@ This generates a file with normalised frequencies of contigs from each cluster a
 ![Confusion matrix](figsD/clustering_gt1000_conf.pdf)
 
 
-To view this also download off server to your local directory:
+To view this you can download off server of use evince if you loggin in with -y:
 
 ```
-scp yourname@class.mbl.edu:~/CONCOCT-complete-example/evaluation-output/clustering_gt1000_conf.pdf .
+evince evaluation-output/clustering_gt1000_conf.pdf .
 ```
 
 ##Validation using single-copy core genes
@@ -311,15 +311,15 @@ cd $CONCOCT_EXAMPLE
 Rscript $CONCOCT/scripts/COGPlot.R -s evaluation-output/clustering_gt1000_scg.tab -o evaluation-output/clustering_gt1000_scg.pdf
 ```
 
-To view this also download off server to your local directory:
+To view this use evince again:
 
 ```
-scp yourname@class.mbl.edu:~/CONCOCT-complete-example/evaluation-output/clustering_gt1000_scg.pdf .
+evince evaluation-output/clustering_gt1000_scg.pdf 
 ```
 
 The plot is downloadable here:
 
-![scg plot](figs/clustering_gt1000_scg.pdf)
+![scg plot](figsD/clustering_gt1000_scg.pdf)
 
 How many 75% complete genomes did we get. Do this yourselves in R.
 ```
