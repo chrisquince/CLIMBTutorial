@@ -11,7 +11,7 @@ Using newer versions will probably not be a problem, but your results may be dif
 ##Login to your VM
 -----------------------
 
-You need to create a VM from the image ... login to it (**ssh -Y**) and then set the permissions on the ephemeral disk:
+You need to create a VM from the image CONCOCT-Tutorial login to it (**ssh -Y**) and then set the permissions on the ephemeral disk:
 
 ```
 sudo umount /mnt 
@@ -411,7 +411,7 @@ Rscript $CONCOCT/scripts/COGPlot.R -s clustering_gt1500_scg.tab -o concoct_clust
 Rscript $CONCOCT/scripts/ConfPlot.R  -c clustering_gt1500_conf.csv -o concoct_clustering_gt1500_conf.pdf
 ```
 
-Now we have 10. So the same as metabat :(
+Now we have 10. So the same as metabat :( CONCOCT as overclustered two of the species.
 
 ![CONCOCT scg plot](figsD/concoct_clustering_gt1500_scg.pdf)
 
