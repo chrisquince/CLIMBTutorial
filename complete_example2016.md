@@ -41,7 +41,7 @@ You can see the full path of a directory you are located in by running the comma
 
 Copy in the example data from the class folder:
 ```
-    cp $CONCOCT_TEST/Example.tar.gz .
+    cp ~/Data/Example.tar.gz .
 ```
 
 And extract:
@@ -53,9 +53,11 @@ And extract:
 ----------------------------
 The first step in the analysis is to assemble all reads into contigs, even 
 for this small example, 1 million reads per sample and 16 samples, this is computationally 
-intensive. There are a number of assemblers available if you want a quick results \megahit generally performs well but Spades is also good. The best choice is data set dependent.
+intensive. There are a number of assemblers available if you want a quick results megahit 
+generally performs well but Spades is also good. The best choice is data set dependent.
 
-Then assemble the reads. We recommend megahit for this. To perform the assembly I ran the following commands, please **do not run this**:
+Then assemble the reads. We recommend megahit for this. To perform the assembly I ran the 
+following commands, please **do not run this**:
 
 ```
 cd Example 
@@ -64,16 +66,20 @@ mv Assembly ..
 cd ..
 ```
 
-However, I **do not** suggest you do this now instead copy the Assembly directory from the class folders:
+However, I **do not** suggest you do this now instead copy the assembly directory from the Data folder:
 
 ```
-    cp -r $CONCOCT_TEST/Assembly .
+    mkdir Assembly
+    cp ~/Data/final.contigs.fa Assembly
 ```
 
 
 ##Cutting up contigs
 ----------------------------
-In order to give more weight to larger contigs and mitigate the effect of assembly errors we cut up the contigs into chunks of 10 Kb. The final chunk is appended to the one before it if it is < 10 Kb to prevent generating small contigs. This means that no contig < 20 Kb is cut up. We use the script ``cut_up_fasta.py`` for this:
+In order to give more weight to larger contigs and mitigate the effect of assembly errors 
+we cut up the contigs into chunks of 10 Kb. The final chunk is appended to the one before 
+it if it is < 10 Kb to prevent generating small contigs. This means that no contig < 20 Kb is cut up. 
+We use the script ``cut_up_fasta.py`` for this:
 
 Now lets cut up the contigs and index for the mapping program bwa:
 ```
@@ -86,13 +92,6 @@ python $CONCOCT/scripts/cut_up_fasta.py -c 10000 -o 0 -m Assembly/final.contigs.
 ------------------------------
 After assembly we map the reads of each sample back to the assembly using [bwa](https://github.com/lh3/bwa).
 
-We are not going to perform mapping ourselves. Instead just copy the pre-calculated files:
-
-```
-    cp -r $CONCOCT_TEST/Map .
-```
-
-These are the commands we ran (**do not run this**).
 
 ```
 cd contigs
@@ -114,7 +113,7 @@ do
 done
 ```
 
-Followed by these (** do not run**):
+Followed by these:
 
 ```
 $CONCOCT/scripts/Lengths.pl final_contigs_c10K.fa > final_contigs_c10K.len
@@ -131,6 +130,8 @@ do
 done
 ```
 
+and:
+
 ```
 for i in Map/*_cov.txt 
 do 
@@ -140,6 +141,14 @@ do
    echo $stub
    awk -F"\t" '{l[$1]=l[$1]+($2 *$3);r[$1]=$4} END {for (i in l){print i","(l[i]/r[i])}}' $i > Map/${stub}_cov.csv
 done
+```
+
+This is quite complex and slow. If you like just copy precomputed files instead:
+
+```
+    cp ~/Data/Map.tar.gz $CONCOCT_EXAMPLE
+    cd $CONCOCT_EXAMPLE
+    tar -xvzf Map.tar.gz
 ```
 
 ##Generate coverage table
