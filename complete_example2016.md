@@ -11,7 +11,7 @@ Using newer versions will probably not be a problem, but your results may be dif
 ##Login to your VM
 -----------------------
 
-You need to create a VM from the image ... login to it and then set the permissions on the ephemeral disk:
+You need to create a VM from the image ... login to it (**ssh -Y**) and then set the permissions on the ephemeral disk:
 
 ```
 sudo umount /mnt 
@@ -243,13 +243,10 @@ evince evaluation-output/ClusterPlot.pdf
 ```
 
 If that fails you will have to copy them off the server to a local directory. 
-Move to that local directory on your computer and type:
-
-    scp yourname@class.mbl.edu:~/CONCOCT-complete-example/evaluation-output/ClusterPlot.pdf .
 
 The figure should look like this:
 
-![Cluster PCA](figs/ClusterPlot.pdf)
+![Cluster PCA](figsD/ClusterPlot.pdf)
 
 
 We can also compare the clustering to species labels. For this test data set we know these labels, they are given in the file ```$CONCOCT_TEST/AssignGenome/clustering_gt1000_smap.csv```. For real data labels may be obtained through taxonomic classification.
